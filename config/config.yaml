@@ -1,0 +1,8 @@
+api:
+  base_url: "https://api.themoviedb.org/3"
+  search_endpoint: "/discover/movie"
+  total_pages: 50
+
+output:
+  raw_data_path: "artifacts/raw/movies.json"
+  clean_data_path: "artifacts/processed/movies.csv"
