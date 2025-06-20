@@ -4,3 +4,11 @@ data_fetching:
   total_pages: 50
   save_file: "artifacts/raw/movies_1000.json"
   CSV_data_path: "artifacts/CSV_data.csv"
+
+
+
+data_preprocessing:
+  data_path: "artifacts/CSV_data.csv"
+  processed_data_dir: "data/processed_data"
+  processed_train_file: "preprocessed_train.csv"
+  processed_test_file: "preprocessed_test.csv"
