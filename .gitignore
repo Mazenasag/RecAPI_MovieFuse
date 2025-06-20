@@ -4,9 +4,13 @@ __pycache__/
 *$py.class
 
 # C extensions
+# In your .gitignore
+research/
+
 *.so
 .env
 # Distribution / packaging
+.api_fetching.ipynb/
 .Python
 build/
 develop-eggs/
