@@ -7,3 +7,10 @@ class DataIngestionConfig:
   total_pages: int
   save_file: Path
   CSV_data_path: Path
+  
+@dataclass
+class DataPreprocessingConfig:
+  data_path: Path
+  processed_data_dir: Path
+  processed_train_file: Path
+  processed_test_file: Path

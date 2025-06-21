@@ -1,6 +1,6 @@
 from RECAPI_MOVIEFUSE.constant import *
 from RECAPI_MOVIEFUSE.utils.common import read_yaml , create_directories
-from RECAPI_MOVIEFUSE.entity.config_entity import DataIngestionConfig
+from RECAPI_MOVIEFUSE.entity.config_entity import DataIngestionConfig ,DataPreprocessingConfig
 
 class ConfigurationManager:
     def __init__(self, config_filepath=CONFIG_FILE_PATH, params_filepath=PARAMS_FILE_PATH):
@@ -17,3 +17,14 @@ class ConfigurationManager:
             save_file=Path(config.save_file),
             CSV_data_path=Path(config.CSV_data_path)
         )
+        
+    def get_data_preprocessing_config(self) -> DataPreprocessingConfig:
+        config = self.config.data_preprocessing
+        create_directories([Path(config.processed_data_dir).parent])
+        return DataPreprocessingConfig(
+            data_path=Path(config.data_path),
+            processed_data_dir=Path(config.processed_data_dir),
+            processed_train_file=Path(config.processed_train_file),
+            processed_test_file=Path(config.processed_test_file),
+        )
+        
