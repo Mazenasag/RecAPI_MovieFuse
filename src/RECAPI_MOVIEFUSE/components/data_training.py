@@ -133,12 +133,6 @@ def recommend_movies_advanced_unscaled(movie_title, df_scaled, df_original, comb
     return recommendations
 
 
-import pandas as pd
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import MinMaxScaler
-
 
 
 text_col = 'overview'
