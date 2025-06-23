@@ -24,7 +24,6 @@ class ConfigurationManager:
         return DataPreprocessingConfig(
             data_path=Path(config.data_path),
             processed_data_dir=Path(config.processed_data_dir),
-            processed_train_file=Path(config.processed_train_file),
-            processed_test_file=Path(config.processed_test_file),
+            processed_data_file=Path(config.processed_data_file),
         )
         

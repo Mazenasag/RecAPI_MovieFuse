@@ -10,6 +10,6 @@ data_fetching:
 data_preprocessing:
   data_path: "artifacts/CSV_data.csv"
   processed_data_dir: "data/processed_data"
-  processed_train_file: "preprocessed_train.csv"
-  processed_test_file: "preprocessed_test.csv"
+  processed_data_file: " processed_data.csv"
+
   

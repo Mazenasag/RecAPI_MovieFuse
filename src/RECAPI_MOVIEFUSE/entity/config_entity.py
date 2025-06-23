@@ -12,5 +12,4 @@ class DataIngestionConfig:
 class DataPreprocessingConfig:
   data_path: Path
   processed_data_dir: Path
-  processed_train_file: Path
-  processed_test_file: Path
+  processed_data_file: Path

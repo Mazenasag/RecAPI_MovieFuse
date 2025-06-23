@@ -6,8 +6,8 @@ from pathlib import Path
 from dataclasses import dataclass
 from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
 from sklearn.model_selection import train_test_split
-from src.logger import logging
-from src.exception import CustomException
+from logger import logging
+from exception import CustomException
 from RECAPI_MOVIEFUSE.entity.config_entity import DataPreprocessingConfig
 
 
@@ -75,14 +75,14 @@ class MoviePreprocessing:
         df = df.rename(columns=self.genre_map)
         return df
 
-    def split_data(self, df: pd.DataFrame):
-        train_df, test_df = train_test_split(
-            df, test_size=0.2, random_state=42
-        )
-        logging.info(f"Split data: train={train_df.shape}, test={test_df.shape}")
-        return train_df, test_df
+    # def split_data(self, df: pd.DataFrame):
+    #     train_df, test_df = train_test_split(
+    #         df, test_size=0.2, random_state=42
+    #     )
+    #     logging.info(f"Split data: train={train_df.shape}, test={test_df.shape}")
+    #     return train_df, test_df
 
-    def scale_features(self, train_df: pd.DataFrame, test_df: pd.DataFrame):
+    def scale_features(self, train_df: pd.DataFrame):
         scale_cols = ['release_date', 'popularity', 'vote_average', 'vote_count']
 
         # Scale safely without modifying original structure
@@ -91,17 +91,17 @@ class MoviePreprocessing:
             columns=scale_cols,
             index=train_df.index
         )
-        test_scaled = pd.DataFrame(
-            self.scaler.transform(test_df[scale_cols]),
-            columns=scale_cols,
-            index=test_df.index
-        )
+        # test_scaled = pd.DataFrame(
+        #     self.scaler.transform(test_df[scale_cols]),
+        #     columns=scale_cols,
+        #     index=test_df.index
+        # )
 
         train_df[scale_cols] = train_scaled
-        test_df[scale_cols] = test_scaled
+        # test_df[scale_cols] = test_scaled
 
         logging.info("Numerical features scaled successfully.")
-        return train_df, test_df
+        return train_df
 
     def save_data(self, data: pd.DataFrame, filename: Path):
         os.makedirs(self.config.processed_data_dir, exist_ok=True)
@@ -118,14 +118,14 @@ class MoviePreprocessing:
             df = self.clean_text_columns(df)
             df = self.encode_genres(df)
 
-            train_df, test_df = self.split_data(df)
-            train_df, test_df = self.scale_features(train_df, test_df)
+            # train_df, test_df = self.split_data(df)
+            df = self.scale_features(df)
 
-            self.save_data(train_df, self.config.processed_train_file)
-            self.save_data(test_df, self.config.processed_test_file)
+            self.save_data(df, self.config.processed_data_file)
+            # self.save_data(test_df, self.config.processed_test_file)
 
             logging.info("Preprocessing pipeline completed successfully.")
-            return train_df, test_df, self.scaler
+            return df, self.scaler
 
         except Exception as e:
             logging.error(f"Error in preprocessing: {e}")
