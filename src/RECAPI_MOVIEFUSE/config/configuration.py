@@ -1,6 +1,6 @@
 from RECAPI_MOVIEFUSE.constant import *
 from RECAPI_MOVIEFUSE.utils.common import read_yaml , create_directories
-from RECAPI_MOVIEFUSE.entity.config_entity import DataIngestionConfig ,DataPreprocessingConfig
+from RECAPI_MOVIEFUSE.entity.config_entity import DataIngestionConfig ,DataPreprocessingConfig,ModelTrainingConfig
 
 class ConfigurationManager:
     def __init__(self, config_filepath=CONFIG_FILE_PATH, params_filepath=PARAMS_FILE_PATH):
@@ -27,3 +27,14 @@ class ConfigurationManager:
             processed_data_file=Path(config.processed_data_file),
         )
         
+    def get_model_training_config(self) -> ModelTrainingConfig:
+        config = self.config.model_training
+        return ModelTrainingConfig(
+            model_name=config.model_name,
+            text_column=config.text_column,
+            numeric_columns=config.numeric_columns,
+            genre_columns=config.genre_columns,
+            genre_weight=config.genre_weight,
+            similarity_top_n=config.similarity_top_n,
+            min_genre_overlap=config.min_genre_overlap
+        )

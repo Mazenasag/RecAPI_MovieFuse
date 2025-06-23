@@ -1,165 +1,90 @@
-import pandas as pd
+import os
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import MinMaxScaler
-
-
-
-text_col = 'overview'
-numeric_cols = ['popularity', 'vote_average', 'vote_count', 'release_date']
-genre_cols = ['Adventure', 'Fantasy', 'Animation', 'Drama', 'Horror', 'Action', 'Comedy', 'History',
-              'Western', 'Thriller', 'Crime', 'Documentary', 'Science Fiction', 'Mystery', 'Music',
-              'Romance', 'Family', 'War', 'TV Movie']
-
-# # Normalize numeric columns to [0,1] scale for better combination
-# scaler = MinMaxScaler()
-# numeric_scaled = scaler.fit_transform(df[numeric_cols])
-
-# TF-IDF for overview text
-tfidf = TfidfVectorizer(stop_words='english', max_features=300)
-overview_tfidf = tfidf.fit_transform(df[text_col]).toarray()
-
-# Weight genres higher to emphasize genre similarity
-genre_weight = 5  # increased weight for genres
-weighted_genres = df[genre_cols].values * genre_weight
-numeric_=df[numeric_cols]
-
-# Combine all features (weighted genres, text, normalized numeric)
-combined_features = np.hstack([
-    overview_tfidf,
-    weighted_genres,
-    numeric_
-])
-
-def recommend_movies_advanced_unscaled(movie_title, df_scaled, df_original, combined_features, genre_cols, top_n=5, min_genre_overlap=1):
-    # Find movie index in scaled df
-    matches = df_scaled[df_scaled['title'].str.lower() == movie_title.lower()]
-    if matches.empty:
-        return f"No movie found with title: '{movie_title}'"
-    idx = matches.index[0]
-
-    # Genre filtering
-    input_genres = df_scaled.loc[idx, genre_cols].values
-    genre_overlap = (df_scaled[genre_cols].values * input_genres).sum(axis=1)
-    candidate_mask = genre_overlap >= min_genre_overlap
-    candidate_indices = np.where(candidate_mask)[0]
-
-    # Similarity calculation limited to genre-similar candidates
-    candidate_features = combined_features[candidate_indices]
-    input_feature = combined_features[idx].reshape(1, -1)
-    similarity_scores = cosine_similarity(input_feature, candidate_features).flatten()
-
-    # Sort and select top_n excluding the input movie itself
-    sorted_indices = similarity_scores.argsort()[::-1]
-    sorted_indices = sorted_indices[1:top_n+1]
-    recommended_indices = candidate_indices[sorted_indices]
-
-    # Use original unscaled df for numeric columns display
-    recommendations = df_original.iloc[recommended_indices][['title', 'popularity', 'vote_average', 'overview']].copy()
-    recommendations.reset_index(drop=True, inplace=True)
-    recommendations.index += 1
-
-    # Truncate overview text for display
-    recommendations['overview'] = recommendations['overview'].apply(lambda x: x[:150] + '...' if isinstance(x, str) and len(x) > 150 else x)
-
-    return recommendations
-
 import pandas as pd
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics.pairwise import cosine_similarity
+from RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
 
 
+class MovieRecommender:
+    def __init__(self, config: ModelTrainingConfig, df_original: pd.DataFrame):
+        self.config = config
+        self.df_original = df_original
+        self.model = SentenceTransformer(config.model_name)
 
-text_col = 'overview'
-numeric_cols = ['popularity', 'vote_average', 'vote_count', 'release_date']
-genre_cols = ['Adventure', 'Fantasy', 'Animation', 'Drama', 'Horror', 'Action', 'Comedy', 'History',
-              'Western', 'Thriller', 'Crime', 'Documentary', 'Science Fiction', 'Mystery', 'Music',
-              'Romance', 'Family', 'War', 'TV Movie']
+    def preprocess_and_cache(self):
+        combined_path = self.config.combined_path
+        df_scaled_path = self.config.df_scaled_path
 
-# # Normalize numeric columns to [0,1] scale for better combination
-# scaler = MinMaxScaler()
-# numeric_scaled = scaler.fit_transform(df[numeric_cols])
+        if os.path.exists(combined_path) and os.path.exists(df_scaled_path):
+            print("\n✅ Loading precomputed features...")
+            self.combined_features = np.load(combined_path)
+            self.df_scaled = pd.read_csv(df_scaled_path)
+        else:
+            print("\n⏳ Computing features... (first time only)")
 
-# TF-IDF for overview text
-tfidf = TfidfVectorizer(stop_words='english', max_features=300)
-overview_tfidf = tfidf.fit_transform(df[text_col]).toarray()
+            # 1. Text Embedding
+            overviews = self.df_original[self.config.text_column].fillna("")
+            self.embeddings = self.model.encode(overviews, show_progress_bar=True)
 
-# Weight genres higher to emphasize genre similarity
-genre_weight = 5  # increased weight for genres
-weighted_genres = df[genre_cols].values * genre_weight
-numeric_=df[numeric_cols]
+            # 2. Normalize numeric columns (with date handling if needed)
+            df = self.df_original.copy()
+            if "release_date" in self.config.numeric_columns:
+                df["release_date"] = pd.to_datetime(df["release_date"], errors='coerce')
+                df["release_date"] = df["release_date"].astype('int64') // 10**9
+                self.df_original["release_date"] = df["release_date"]
 
-# Combine all features (weighted genres, text, normalized numeric)
-combined_features = np.hstack([
-    overview_tfidf,
-    weighted_genres,
-    numeric_
-])
+            scaler = MinMaxScaler()
+            self.numeric_scaled = scaler.fit_transform(df[self.config.numeric_columns])
 
-def recommend_movies_advanced_unscaled(movie_title, df_scaled, df_original, combined_features, genre_cols, top_n=5, min_genre_overlap=1):
-    # Find movie index in scaled df
-    matches = df_scaled[df_scaled['title'].str.lower() == movie_title.lower()]
-    if matches.empty:
-        return f"No movie found with title: '{movie_title}'"
-    idx = matches.index[0]
+            # 3. Weight genres
+            genre_data = df[self.config.genre_columns].values
+            self.weighted_genres = genre_data * self.config.genre_weight
 
-    # Genre filtering
-    input_genres = df_scaled.loc[idx, genre_cols].values
-    genre_overlap = (df_scaled[genre_cols].values * input_genres).sum(axis=1)
-    candidate_mask = genre_overlap >= min_genre_overlap
-    candidate_indices = np.where(candidate_mask)[0]
+            # 4. Combine features
+            self.combined_features = np.hstack([
+                self.embeddings,
+                self.weighted_genres,
+                self.numeric_scaled
+            ])
 
-    # Similarity calculation limited to genre-similar candidates
-    candidate_features = combined_features[candidate_indices]
-    input_feature = combined_features[idx].reshape(1, -1)
-    similarity_scores = cosine_similarity(input_feature, candidate_features).flatten()
+            # 5. Save
+            os.makedirs(os.path.dirname(combined_path), exist_ok=True)
+            np.save(combined_path, self.combined_features)
+            self.df_scaled = df.copy()
+            self.df_scaled[self.config.numeric_columns] = self.numeric_scaled
+            self.df_scaled.to_csv(df_scaled_path, index=False)
+            print("✅ Features saved.")
 
-    # Sort and select top_n excluding the input movie itself
-    sorted_indices = similarity_scores.argsort()[::-1]
-    sorted_indices = sorted_indices[1:top_n+1]
-    recommended_indices = candidate_indices[sorted_indices]
+    def recommend(self, movie_title: str):
+        df = self.df_scaled
+        matches = df[df['title'].str.lower() == movie_title.lower()]
+        if matches.empty:
+            return f"No movie found with title: '{movie_title}'"
 
-    # Use original unscaled df for numeric columns display
-    recommendations = df_original.iloc[recommended_indices][['title', 'popularity', 'vote_average', 'overview']].copy()
-    recommendations.reset_index(drop=True, inplace=True)
-    recommendations.index += 1
+        idx = matches.index[0]
+        input_genres = df.loc[idx, self.config.genre_columns].values
+        genre_overlap = (df[self.config.genre_columns].values * input_genres).sum(axis=1)
 
-    # Truncate overview text for display
-    recommendations['overview'] = recommendations['overview'].apply(lambda x: x[:150] + '...' if isinstance(x, str) and len(x) > 150 else x)
+        candidate_mask = genre_overlap >= self.config.min_genre_overlap
+        candidate_indices = np.where(candidate_mask)[0]
 
-    return recommendations
+        input_feature = self.combined_features[idx].reshape(1, -1)
+        candidate_features = self.combined_features[candidate_indices]
+        similarity_scores = cosine_similarity(input_feature, candidate_features).flatten()
 
+        sorted_indices = similarity_scores.argsort()[::-1][1:self.config.similarity_top_n + 1]
+        recommended_indices = candidate_indices[sorted_indices]
 
+        recommendations = self.df_original.iloc[recommended_indices][
+            ['title', 'popularity', 'vote_average', 'overview']
+        ].copy()
+        recommendations.reset_index(drop=True, inplace=True)
+        recommendations.index += 1
 
+        recommendations['overview'] = recommendations['overview'].apply(
+            lambda x: x[:150] + '...' if isinstance(x, str) and len(x) > 150 else x
+        )
 
-text_col = 'overview'
-numeric_cols = ['popularity', 'vote_average', 'vote_count', 'release_date']
-genre_cols = ['Adventure', 'Fantasy', 'Animation', 'Drama', 'Horror', 'Action', 'Comedy', 'History',
-              'Western', 'Thriller', 'Crime', 'Documentary', 'Science Fiction', 'Mystery', 'Music',
-              'Romance', 'Family', 'War', 'TV Movie']
-
-# # Normalize numeric columns to [0,1] scale for better combination
-# scaler = MinMaxScaler()
-# numeric_scaled = scaler.fit_transform(df[numeric_cols])
-
-# TF-IDF for overview text
-tfidf = TfidfVectorizer(stop_words='english', max_features=300)
-overview_tfidf = tfidf.fit_transform(df[text_col]).toarray()
-
-# Weight genres higher to emphasize genre similarity
-genre_weight = 5  # increased weight for genres
-weighted_genres = df[genre_cols].values * genre_weight
-numeric_=df[numeric_cols]
-
-# Combine all features (weighted genres, text, normalized numeric)
-combined_features = np.hstack([
-    overview_tfidf,
-    weighted_genres,
-    numeric_
-])
-
-
-
+        return recommendations

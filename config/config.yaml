@@ -13,3 +13,25 @@ data_preprocessing:
   processed_data_file: " processed_data.csv"
 
   
+data_fetching:
+  base_url: "https://api.themoviedb.org/3"
+  search_endpoint: "/discover/movie"
+  total_pages: 50
+  save_file: "artifacts/raw/movies_1000.json"
+  CSV_data_path: "artifacts/CSV_data.csv"
+
+data_preprocessing:
+  data_path: "artifacts/CSV_data.csv"
+  processed_data_dir: "data/processed_data"
+  processed_data_file: "processed_data.csv"
+
+model_training:
+  model_name: "all-MiniLM-L6-v2"
+  text_column: "overview"
+  numeric_columns: ["popularity", "vote_average", "vote_count", "release_date"]
+  genre_columns: ["Adventure", "Fantasy", "Animation", "Drama", "Horror", "Action", "Comedy", "History",
+                  "Western", "Thriller", "Crime", "Documentary", "Science Fiction", "Mystery", "Music",
+                  "Romance", "Family", "War", "TV Movie"]
+  genre_weight: 5
+  similarity_top_n: 5
+  min_genre_overlap: 1

@@ -82,26 +82,26 @@ class MoviePreprocessing:
     #     logging.info(f"Split data: train={train_df.shape}, test={test_df.shape}")
     #     return train_df, test_df
 
-    def scale_features(self, train_df: pd.DataFrame):
-        scale_cols = ['release_date', 'popularity', 'vote_average', 'vote_count']
+    # def scale_features(self, train_df: pd.DataFrame):
+    #     scale_cols = ['release_date', 'popularity', 'vote_average', 'vote_count']
 
-        # Scale safely without modifying original structure
-        train_scaled = pd.DataFrame(
-            self.scaler.fit_transform(train_df[scale_cols]),
-            columns=scale_cols,
-            index=train_df.index
-        )
-        # test_scaled = pd.DataFrame(
-        #     self.scaler.transform(test_df[scale_cols]),
-        #     columns=scale_cols,
-        #     index=test_df.index
-        # )
+    #     # Scale safely without modifying original structure
+    #     train_scaled = pd.DataFrame(
+    #         self.scaler.fit_transform(train_df[scale_cols]),
+    #         columns=scale_cols,
+    #         index=train_df.index
+    #     )
+    #     # test_scaled = pd.DataFrame(
+    #     #     self.scaler.transform(test_df[scale_cols]),
+    #     #     columns=scale_cols,
+    #     #     index=test_df.index
+    #     # )
 
-        train_df[scale_cols] = train_scaled
-        # test_df[scale_cols] = test_scaled
+    #     train_df[scale_cols] = train_scaled
+    #     # test_df[scale_cols] = test_scaled
 
-        logging.info("Numerical features scaled successfully.")
-        return train_df
+    #     logging.info("Numerical features scaled successfully.")
+    #     return train_df
 
     def save_data(self, data: pd.DataFrame, filename: Path):
         os.makedirs(self.config.processed_data_dir, exist_ok=True)
@@ -119,7 +119,7 @@ class MoviePreprocessing:
             df = self.encode_genres(df)
 
             # train_df, test_df = self.split_data(df)
-            df = self.scale_features(df)
+            # df = self.scale_features(df)
 
             self.save_data(df, self.config.processed_data_file)
             # self.save_data(test_df, self.config.processed_test_file)

@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
+from typing import List
+
 @dataclass
 class DataIngestionConfig:
   base_url: str
@@ -13,3 +15,14 @@ class DataPreprocessingConfig:
   data_path: Path
   processed_data_dir: Path
   processed_data_file: Path
+
+
+@dataclass
+class ModelTrainingConfig:
+    model_name: str
+    text_column: str
+    numeric_columns: List[str]
+    genre_columns: List[str]
+    genre_weight: int
+    similarity_top_n: int
+    min_genre_overlap: int
