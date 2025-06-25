@@ -8,14 +8,14 @@ from RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
 
 
 class MovieRecommender:
-    def __init__(self, config: ModelTrainingConfig, df_original: pd.DataFrame):
+    def __init__(self, config: ModelTrainingConfig):
         self.config = config
-        self.df_original = df_original
+        self.df_original = self.config.df_original
         self.model = SentenceTransformer(config.model_name)
 
     def preprocess_and_cache(self):
         combined_path = self.config.combined_path
-        df_scaled_path = self.config.df_scaled_path
+        df_scaled_path = self.config.df_original
 
         if os.path.exists(combined_path) and os.path.exists(df_scaled_path):
             print("\n✅ Loading precomputed features...")
