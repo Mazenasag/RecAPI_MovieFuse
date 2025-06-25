@@ -26,8 +26,8 @@ data_preprocessing:
   processed_data_file: "processed_data.csv"
 
 model_training:
-  df_original: "data/processed_data"
-  combined_path: "data/combined_data.csv"
+  df_original: "data/processed_data/processed_data.csv"
+  combined_path: "artifacts/combined_features.npy"
   model_name: "all-MiniLM-L6-v2"
   text_column: "overview"
   numeric_columns: ["popularity", "vote_average", "vote_count", "release_date"]

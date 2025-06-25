@@ -30,6 +30,8 @@ class ConfigurationManager:
     def get_model_training_config(self) -> ModelTrainingConfig:
         config = self.config.model_training
         return ModelTrainingConfig(
+            df_original=config.df_original,
+            combined_path=config.combined_path,
             model_name=config.model_name,
             text_column=config.text_column,
             numeric_columns=config.numeric_columns,
