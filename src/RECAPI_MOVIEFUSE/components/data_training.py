@@ -115,4 +115,5 @@ class MovieRecommender:
             lambda x: x[:150] + '...' if isinstance(x, str) and len(x) > 150 else x
         )
 
+
         return recommendations
