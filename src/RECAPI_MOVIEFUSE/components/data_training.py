@@ -110,6 +110,7 @@ class MovieRecommender:
         recommendations.reset_index(drop=True, inplace=True)
         recommendations.index += 1
 
+
         recommendations['overview'] = recommendations['overview'].apply(
             lambda x: x[:150] + '...' if isinstance(x, str) and len(x) > 150 else x
         )

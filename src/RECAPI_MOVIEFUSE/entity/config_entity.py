@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+
 from typing import List
 
 
@@ -17,6 +18,7 @@ class DataPreprocessingConfig:
     data_path: Path
     processed_data_dir: Path
     processed_data_file: Path
+
 
 
 @dataclass
