@@ -84,6 +84,7 @@ class MovieRecommender:
         self.df_scaled = df.copy()
         self.df_scaled[self.config.numeric_columns] = numeric_scaled
 
+
     def recommend(self, movie_title: str):
         df = self.df_scaled
         matches = df[df['title'].str.lower() == movie_title.lower()]
