@@ -6,7 +6,7 @@ __pycache__/
 # C extensions
 # In your .gitignore
 research/
-
+.artifacts/images
 *.so
 .env
 # Distribution / packaging

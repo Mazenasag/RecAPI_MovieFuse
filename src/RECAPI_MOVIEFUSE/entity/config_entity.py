@@ -11,6 +11,9 @@ class DataIngestionConfig:
     total_pages: int
     save_file: Path
     CSV_data_path: Path
+    images_dir: Path
+    image_base_url: str
+    
 
 
 @dataclass
