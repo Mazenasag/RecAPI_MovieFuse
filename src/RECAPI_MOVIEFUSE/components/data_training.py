@@ -106,7 +106,7 @@ class MovieRecommender:
         recommended_indices = candidate_indices[sorted_indices]
 
         recommendations = self.df_original.iloc[recommended_indices][
-            ['title', 'popularity', 'vote_average', 'overview']
+            ['id','title', 'popularity', 'vote_average', 'overview']
         ].copy()
         recommendations.reset_index(drop=True, inplace=True)
         recommendations.index += 1
