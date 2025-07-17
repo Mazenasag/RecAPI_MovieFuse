@@ -51,7 +51,7 @@ It is designed using **modular MLOps principles** for maintainability, scalabili
 ---
 
 ## 📁 Project Structure
-
+```
 RECAPI_MOVIEFUSE/
 │
 ├── .github/workflows/ # CI/CD config (GitHub Actions)
@@ -77,7 +77,7 @@ RECAPI_MOVIEFUSE/
 └── setup.py
 
 
-
+```
 ---
 
 ## ⚙️ YAML Configuration
@@ -121,6 +121,7 @@ jobs:
         run: python src/recapi/pipeline/main.py
 
 ```
+```
 🎯 Sample Results
 
 | Query Movie   | Top Recommendation | Similarity Score |
@@ -129,7 +130,7 @@ jobs:
 | The Matrix    | Equilibrium        | 0.88             |
 | Titanic       | The Notebook       | 0.85             |
 | The Godfather | Scarface           | 0.83             |
-
+```
 
 🛠️ How to Run
 Clone the repo and install dependencies:

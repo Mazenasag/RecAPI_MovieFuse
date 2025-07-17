@@ -117,7 +117,7 @@ button:hover {
     transition: all 0.3s ease;
 }
 
-.overview.expanded {
+.card.expanded .overview {
     -webkit-line-clamp: unset;
     max-height: none;
     overflow: visible;

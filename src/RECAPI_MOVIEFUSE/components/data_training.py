@@ -113,7 +113,7 @@ class MovieRecommender:
 
 
         recommendations['overview'] = recommendations['overview'].apply(
-            lambda x: x[:150] + '...' if isinstance(x, str) and len(x) > 150 else x
+            lambda x: x[:] + '...' if isinstance(x, str) and len(x) > 150 else x
         )
 
 

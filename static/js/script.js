@@ -14,9 +14,14 @@ window.onload = function () {
     const toggles = document.querySelectorAll(".read-more");
     toggles.forEach(btn => {
         btn.addEventListener("click", () => {
-            const overview = btn.previousElementSibling;
-            overview.classList.toggle("expanded");
-            btn.textContent = overview.classList.contains("expanded") ? "Read less" : "Read more";
+            const card = btn.closest(".card");
+            if (!card) return;
+
+            card.classList.toggle("expanded");
+
+            const overview = card.querySelector(".overview");
+            const isExpanded = card.classList.contains("expanded");
+            btn.textContent = isExpanded ? "Read less" : "Read more";
         });
     });
 };
