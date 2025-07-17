@@ -1,7 +1,7 @@
 # 🎬🧠 RECAPI_MOVIEFUSE: A Hybrid Movie Recommendation System
 
-![Interface Screenshot](static/movies_homepage.PNG)
-![Recommendation Screenshot](static/recommendation_demo.PNG)
+![Interface Screenshot](static/images/Capture.PNG)
+![Recommendation Screenshot](static/images/Capture2.PNG)
 
 ## 🔍 Overview
 
@@ -16,7 +16,7 @@ It is designed using **modular MLOps principles** for maintainability, scalabili
 
 ### Key Features:
 
-- API-based data ingestion from IMDb-like datasets  
+- API-driven data ingestion from IMDb-like datasets — supports dynamic updates and re-runs with fresh data
 - Text preprocessing & vectorization using pretrained Sentence Transformers  
 - Cosine similarity scoring for content-based matching  
 - Configurable recommendation logic (genre prioritization, similarity weighting)  
@@ -161,16 +161,3 @@ yaml
 Copy
 Edit
 
----
-
-You can copy and paste this Markdown directly into your `README.md` file, and it will render beautifully on GitHub.
-
-Would you like a similar version for your **card fraud detection** project now?
-
-
-
-
-
-
-
-Ask ChatGPT
