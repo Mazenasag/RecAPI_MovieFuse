@@ -63,10 +63,13 @@ RECAPI_MOVIEFUSE/
 ├── research/
 │ └── embeddings.ipynb # EDA and embedding experiments
 ├── src/recapi/
+│ ├── config/
+| | ├── init_.py
+│ │ |── configuration.py
 │ ├── component/
 │ │ ├── ingestion.py
 │ │ ├── preprocessing.py
-│ │ └── recommender.py # Core recommendation logic
+│ │ └── training.py # Core recommendation logic
 │ ├── utils/
 │ │ └── vector_tools.py # Similarity, distance, and vector ops
 │ ├── config/
