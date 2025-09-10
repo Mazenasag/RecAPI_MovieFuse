@@ -1,12 +1,18 @@
-from flask import Flask, request, render_template, send_from_directory
-from src.RECAPI_MOVIEFUSE.components.data_training import MovieRecommender
-from src.RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
-import pandas as pd
+import sys
 import os
+
+# Add src folder to sys.path so imports work
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+
+from flask import Flask, request, render_template, send_from_directory
+from RECAPI_MOVIEFUSE.components.data_training import MovieRecommender
+from RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
+import pandas as pd
 
 # Create Flask app
 application = Flask(__name__)
 app = application
+
 # Route to serve image files from artifacts/images/
 @app.route('/artifacts/images/<path:filename>')
 def serve_artifact_image(filename):
@@ -46,7 +52,6 @@ def index():
 
     if request.method == 'POST':
         input_title = request.form.get('title')
-
         matched = df[df['title'].str.lower() == input_title.lower()]
 
         if matched.empty:
@@ -61,7 +66,6 @@ def index():
                 error = "No recommendations found."
                 recommendations = None
             else:
-                # Map images using movie 'id'
                 recommendations['image'] = recommendations['id'].astype(str).map(
                     lambda x: f'/artifacts/images/{x}.jpg'
                 )
@@ -76,9 +80,6 @@ def index():
     )
 
 # Entry point for local dev
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
 
-# ✅ WSGI server entry for AWS / Gunicorn
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
