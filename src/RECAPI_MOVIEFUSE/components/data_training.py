@@ -4,8 +4,7 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics.pairwise import cosine_similarity
-from RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
-
+from ..entity.config_entity import ModelTrainingConfig
 
 class MovieRecommender:
     def __init__(self, config:ModelTrainingConfig):

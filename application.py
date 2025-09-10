@@ -2,11 +2,11 @@ import sys
 import os
 
 # Add src folder to sys.path so imports work
-sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+# sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
 from flask import Flask, request, render_template, send_from_directory
-from RECAPI_MOVIEFUSE.components.data_training import MovieRecommender
-from RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
+from src.RECAPI_MOVIEFUSE.components.data_training import MovieRecommender
+from src.RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
 import pandas as pd
 
 # Create Flask app
