@@ -10,9 +10,9 @@ from src.RECAPI_MOVIEFUSE.components.data_training import MovieRecommender
 from src.RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
 import pandas as pd
 
-# Create Flask app
+# Create Flask app - ensure this is named 'application'
 application = Flask(__name__)
-app = application
+app = application  # Keep this for local development
 
 # Route to serve image files from artifacts/images/
 @app.route('/artifacts/images/<path:filename>')
