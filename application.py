@@ -4,14 +4,15 @@ from src.RECAPI_MOVIEFUSE.entity.config_entity import ModelTrainingConfig
 import pandas as pd
 import os
 
-app = Flask(__name__)
-
+# Create Flask app
+application = Flask(__name__)
+app = application
 # Route to serve image files from artifacts/images/
 @app.route('/artifacts/images/<path:filename>')
 def serve_artifact_image(filename):
     return send_from_directory('artifacts/images', filename)
 
-# Initialize config with your provided values
+# Initialize config
 config = ModelTrainingConfig(
     df_original="data/processed_data/processed_data.csv",
     combined_path="artifacts/combined_features.npy",
@@ -31,9 +32,11 @@ config = ModelTrainingConfig(
 # Load dataset once at startup
 df = pd.read_csv(config.df_original)
 
+# Initialize recommender
 recommender = MovieRecommender(config)
 recommender.preprocess_and_cache()
 
+# Main route
 @app.route('/', methods=['GET', 'POST'])
 def index():
     recommendations = None
@@ -58,7 +61,7 @@ def index():
                 error = "No recommendations found."
                 recommendations = None
             else:
-                # ✅ Map images using movie 'id'
+                # Map images using movie 'id'
                 recommendations['image'] = recommendations['id'].astype(str).map(
                     lambda x: f'/artifacts/images/{x}.jpg'
                 )
@@ -72,6 +75,10 @@ def index():
         error=error
     )
 
-
+# Entry point for local dev
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
+
+# ✅ WSGI server entry for AWS / Gunicorn
+

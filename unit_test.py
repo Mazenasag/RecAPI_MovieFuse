@@ -1,5 +1,5 @@
 import pytest
-from app import app  # ✅ correct: no `.py`, just the module name
+from application import app  # ✅ correct: no `.py`, just the module name
 
 @pytest.fixture
 def client():

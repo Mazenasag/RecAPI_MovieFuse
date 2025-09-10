@@ -1,0 +1,7 @@
+flask
+numpy
+pandas
+scikit-learn==1.6.1
+dill
+sentence-transformers
+#-e .
