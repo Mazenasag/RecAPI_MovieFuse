@@ -1,8 +1,9 @@
 import sys
 import os
 
-# Add src folder to sys.path so imports work
-# sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+# Add the current directory and src folder to sys.path
+sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from flask import Flask, request, render_template, send_from_directory
 from src.RECAPI_MOVIEFUSE.components.data_training import MovieRecommender
